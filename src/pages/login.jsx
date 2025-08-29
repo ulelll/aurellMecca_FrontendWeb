@@ -1,44 +1,62 @@
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { login } from '../api/auth';
-import { useAuthStore } from '../store/authStore';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { loginSchema } from '../utils/validation';
-import FormInput from '../components/form_input';
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useAuthStore } from "../store/authStore";
+import { login } from "../api/auth";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import FormInput from "../components/form_input";
 
+const schema = yup.object().shape({
+  email: yup.string().required("Email required").email(),
+  password: yup.string().required("Password required"),
+});
 
 const Login = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: yupResolver(loginSchema),
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(schema) });
   const { setToken } = useAuthStore();
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     try {
-      console.log('Form data submitted:', data); 
-      const response = await login(data.username.trim(), data.password.trim());
-      console.log('Login response:', response); 
-      setToken(response.token);
-      toast.success('Login successful');
-      navigate('/users');
-    } catch (error) {
-      console.error('Login error:', error.response?.data || error.message);
-      toast.error(error.message || 'Invalid credentials');
+      const res = await login(data.email, data.password);
+      setToken(res.token);
+      toast.success("Login success!");
+      navigate("/users");
+    } catch (err) {
+      toast.error(err.message || "Login failed");
     }
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f4f4f4' }}>
+    <div className="min-h-screen flex justify-center items-center bg-gray-100">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        style={{ background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 0 10px rgba(0,0,0,0.1)', maxWidth: '400px', width: '90%' }}
+        className="bg-white p-6 rounded shadow-md w-full max-w-sm"
       >
-        <h1 style={{ fontSize: '1.8rem', marginBottom: '20px' }}>Login</h1>
-        <FormInput register={register} errors={errors} name="username" label="Username" />
-        <FormInput register={register} errors={errors} name="password" label="Password" type="password" />
-        <button type="submit" style={{ width: '100%' }}>Login</button>
+        <h1 className="text-xl mb-4">Login</h1>
+        <FormInput
+          label="Email"
+          register={register("email")}
+          error={errors.email?.message}
+        />
+        <FormInput
+          label="Password"
+          type="password"
+          register={register("password")}
+          error={errors.password?.message}
+        />
+
+        <button
+          type="submit"
+          className="w-full mt-4 bg-blue-600 text-white p-2 rounded"
+        >
+          Login
+        </button>
       </form>
     </div>
   );

@@ -5,21 +5,61 @@ const Layout = () => {
   const { token, logout } = useAuthStore();
   const navigate = useNavigate();
 
-  if (!token) {
+  const handleLogout = () => {
+    logout();
     navigate('/login');
-    return null;
-  }
+  };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f4f4f4' }}>
-      <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <Link to="/users" style={{ marginRight: '15px' }}>Users</Link>
-          <Link to="/products">Products</Link>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <nav style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '10px 20px',
+        backgroundColor: '#ef4195ff',
+        color: 'white',
+        flexWrap: 'wrap'
+      }}>
+        <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+          {token && <Link to="/users" style={{ color: 'white', textDecoration: 'none' }}>Users</Link>}
+          {token && <Link to="/products" style={{ color: 'white', textDecoration: 'none' }}>Products</Link>}
         </div>
-        <button onClick={logout}>Logout</button>
+        <div>
+          {token ? (
+            <button
+              onClick={handleLogout}
+              style={{
+                backgroundColor: 'white',
+                color: '#007bff',
+                border: 'none',
+                borderRadius: '5px',
+                padding: '5px 10px',
+                cursor: 'pointer'
+              }}
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate('/login')}
+              style={{
+                backgroundColor: 'white',
+                color: '#007bff',
+                border: 'none',
+                borderRadius: '5px',
+                padding: '5px 10px',
+                cursor: 'pointer'
+              }}
+            >
+              Login
+            </button>
+          )}
+        </div>
       </nav>
-      <main className="container">
+
+      {/* Main Content */}
+      <main style={{ flex: 1, padding: '20px', backgroundColor: '#f4f4f4' }}>
         <Outlet />
       </main>
     </div>
