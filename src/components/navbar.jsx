@@ -15,36 +15,30 @@ const Navbar = () => {
     }
   }, [darkMode]);
 
-  if (!token) return null; 
+  if (!token) return null;
 
   return (
-    <nav className="bg-white dark:bg-gray-800 shadow-md p-4 flex flex-col md:flex-row justify-between items-center gap-2">
-      <div className="flex gap-4 items-center">
+    <nav className="navbar">
+      <div className="navbar-links">
         <Link
           to="/users"
-          className={`px-3 py-1 rounded ${location.pathname === '/users' ? 'bg-blue-600 text-white' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+          className={location.pathname === '/users' ? 'active' : ''}
         >
           Users
         </Link>
         <Link
           to="/products"
-          className={`px-3 py-1 rounded ${location.pathname === '/products' ? 'bg-blue-600 text-white' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+          className={location.pathname === '/products' ? 'active' : ''}
         >
           Products
         </Link>
-      </div>
-
-      <div className="flex gap-2 items-center mt-2 md:mt-0">
         <button
           onClick={() => setDarkMode(!darkMode)}
-          className="px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+          className="dark-mode-toggle"
         >
           {darkMode ? 'Light' : 'Dark'}
         </button>
-        <button
-          onClick={logout}
-          className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700"
-        >
+        <button onClick={logout} className="logout-button">
           Logout
         </button>
       </div>

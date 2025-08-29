@@ -1,3 +1,4 @@
+// src/pages/products.jsx
 import { useState, useEffect } from 'react';
 import { fetchProducts, fetchProductDetail, addProduct, editProduct } from "../api/products";
 import { toast } from 'react-toastify';
@@ -37,7 +38,7 @@ const Products = () => {
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
-    setSkip(0); 
+    setSkip(0);
   };
 
   const showDetail = async (id) => {
@@ -85,52 +86,52 @@ const Products = () => {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="p-4 overflow-x-auto">
-      <h1 className="text-2xl mb-4">Products</h1>
-
-      <div className="flex flex-col md:flex-row md:justify-between gap-2 mb-4">
+    <div className="table-container">
+      <h2>Products</h2>
+      <div className="search-bar">
         <input
           type="text"
           placeholder="Search product..."
           value={search}
           onChange={handleSearch}
-          className="p-2 border rounded w-full md:max-w-xs"
         />
-        <button onClick={() => openForm()} className="bg-blue-600 text-white p-2 rounded w-full md:w-auto">Add Product</button>
+        <button onClick={() => openForm()} className="action-button add-button">
+          Add Product
+        </button>
       </div>
 
-      <table className="w-full border-collapse">
+      <table>
         <thead>
-          <tr className="bg-blue-600 text-white">
-            <th className="p-2 text-left">#</th>
-            <th className="p-2 text-left">Title</th>
-            <th className="p-2 text-left">Price</th>
-            <th className="p-2 text-left">Description</th>
-            <th className="p-2 text-left">Actions</th>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {loading ? (
-            <tr><td colSpan={5} className="text-center p-4">Loading...</td></tr>
+            <tr><td colSpan={5} className="table-message">Loading...</td></tr>
           ) : products.length === 0 ? (
-            <tr><td colSpan={5} className="text-center p-4">No products found</td></tr>
+            <tr><td colSpan={5} className="table-message">No products found</td></tr>
           ) : (
             products.map((p, idx) => (
-              <tr key={p.id} className="border-b">
-                <td className="p-2">{skip + idx + 1}</td>
-                <td className="p-2">{p.title}</td>
-                <td className="p-2">${p.price}</td>
-                <td className="p-2">{p.description}</td>
-                <td className="p-2 flex gap-2">
+              <tr key={p.id}>
+                <td>{skip + idx + 1}</td>
+                <td>{p.title}</td>
+                <td>${p.price}</td>
+                <td>{p.description}</td>
+                <td className="action-buttons">
                   <button
                     onClick={() => showDetail(p.id)}
-                    className="bg-green-600 text-white px-2 py-1 rounded"
+                    className="action-button detail-button"
                   >
                     Detail
                   </button>
                   <button
                     onClick={() => openForm(p)}
-                    className="bg-yellow-500 text-white px-2 py-1 rounded"
+                    className="action-button edit-button"
                   >
                     Edit
                   </button>
@@ -141,29 +142,27 @@ const Products = () => {
         </tbody>
       </table>
 
-      <div className="flex gap-2 mt-4 flex-wrap">
+      <div className="pagination">
         <button
           onClick={handlePrev}
           disabled={skip === 0}
-          className={`px-3 py-1 rounded border ${skip === 0 ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-white border-blue-600 text-blue-600'}`}
         >
           Prev
         </button>
-        <span className="self-center">Page {currentPage} of {totalPages}</span>
+        <span>Page {currentPage} of {totalPages}</span>
         <button
           onClick={handleNext}
           disabled={skip + limit >= total}
-          className={`px-3 py-1 rounded border ${(skip + limit >= total) ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-white border-blue-600 text-blue-600'}`}
         >
           Next
         </button>
       </div>
 
       {selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded shadow-md w-full max-w-md relative">
-            <button onClick={closeDetail} className="absolute top-2 right-2 text-gray-500">X</button>
-            <h2 className="text-xl mb-2">{selectedProduct.title}</h2>
+        <div className="modal">
+          <div className="modal-content">
+            <button onClick={closeDetail} className="modal-close">X</button>
+            <h2>{selectedProduct.title}</h2>
             <p><strong>Price:</strong> ${selectedProduct.price}</p>
             <p><strong>Description:</strong> {selectedProduct.description}</p>
             <p><strong>Brand:</strong> {selectedProduct.brand}</p>
@@ -173,39 +172,39 @@ const Products = () => {
       )}
 
       {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <form
-            onSubmit={submitForm}
-            className="bg-white p-6 rounded shadow-md w-full max-w-md relative flex flex-col gap-2"
-          >
-            <button onClick={closeForm} type="button" className="absolute top-2 right-2 text-gray-500">X</button>
-            <h2 className="text-xl mb-2">{formData.id ? 'Edit Product' : 'Add Product'}</h2>
-            <input
-              name="title"
-              placeholder="Title"
-              value={formData.title}
-              onChange={handleFormChange}
-              className="p-2 border rounded"
-              required
-            />
-            <input
-              name="price"
-              placeholder="Price"
-              type="number"
-              value={formData.price}
-              onChange={handleFormChange}
-              className="p-2 border rounded"
-              required
-            />
-            <textarea
-              name="description"
-              placeholder="Description"
-              value={formData.description}
-              onChange={handleFormChange}
-              className="p-2 border rounded"
-              required
-            />
-            <button type="submit" className="bg-blue-600 text-white p-2 rounded mt-2">{formData.id ? 'Update' : 'Add'}</button>
+        <div className="modal">
+          <form onSubmit={submitForm} className="modal-content">
+            <button onClick={closeForm} type="button" className="modal-close">X</button>
+            <h2>{formData.id ? 'Edit Product' : 'Add Product'}</h2>
+            <div className="form-group">
+              <input
+                name="title"
+                placeholder="Title"
+                value={formData.title}
+                onChange={handleFormChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <input
+                name="price"
+                placeholder="Price"
+                type="number"
+                value={formData.price}
+                onChange={handleFormChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <textarea
+                name="description"
+                placeholder="Description"
+                value={formData.description}
+                onChange={handleFormChange}
+                required
+              />
+            </div>
+            <button type="submit">{formData.id ? 'Update' : 'Add'}</button>
           </form>
         </div>
       )}

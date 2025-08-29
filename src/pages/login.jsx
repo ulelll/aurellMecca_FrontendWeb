@@ -33,12 +33,9 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-100">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="bg-white p-6 rounded shadow-md w-full max-w-sm"
-      >
-        <h1 className="text-xl mb-4">Login</h1>
+    <div className="app-container">
+      <form onSubmit={handleSubmit(onSubmit)} className="login-container">
+        <h2>Login</h2>
         <FormInput
           label="Email"
           register={register("email")}
@@ -50,13 +47,7 @@ const Login = () => {
           register={register("password")}
           error={errors.password?.message}
         />
-
-        <button
-          type="submit"
-          className="w-full mt-4 bg-blue-600 text-white p-2 rounded"
-        >
-          Login
-        </button>
+        <button type="submit">Login</button>
       </form>
     </div>
   );
